@@ -39,6 +39,17 @@ export function calculateLevelFromXp(xp: number): {
   };
 }
 
+export function getNextUnlockMilestone(level: number, xp: number): string {
+  if (level < 2) {
+    return `${Math.max(0, 150 - xp)} XP until Level 2 (Unlocks Desert World)`;
+  }
+  if (level < 3) {
+    return `${Math.max(0, 350 - xp)} XP until Level 3 (Unlocks Future City)`;
+  }
+  const { currentLevelXp, nextLevelXp } = calculateLevelFromXp(xp);
+  return `${Math.max(0, nextLevelXp - currentLevelXp)} XP until Level ${level + 1}`;
+}
+
 export const BADGES_DATA: Badge[] = [
   {
     id: 'first-step',

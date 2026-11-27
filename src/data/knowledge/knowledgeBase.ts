@@ -64,6 +64,33 @@ export const KNOWLEDGE_BASE: CompanionTopic[] = [
       'Recycling processes used materials into new ones, while a circular economy designs products from the start to be repaired, reused, composted, or remanufactured—minimizing waste before it is ever created.',
     actionTip: 'Practice sorting recyclables, organics, and e-waste in Forest Waste Sorting and Future City!',
   },
+  {
+    id: 'pollinators-biodiversity',
+    title: 'Pollinators & Biodiversity',
+    keywords: ['bee', 'bees', 'pollinator', 'pollinators', 'butterfly', 'flower', 'wildflower', 'biodiversity', 'insect'],
+    suggestedQuestion: 'Why are pollinators like bees and butterflies essential for ecosystems?',
+    response:
+      'Over 75% of flowering plants and roughly one-third of human food crops depend on animal pollinators. Planting native wildflowers, avoiding harsh pesticides, and leaving natural nesting habitats keep pollinator populations thriving.',
+    actionTip: 'Restore Green Forest and Desert World to see native wildflowers bloom!',
+  },
+  {
+    id: 'urban-cooling',
+    title: 'Green Cities & Urban Cooling',
+    keywords: ['city', 'urban', 'heat island', 'vertical garden', 'rooftop', 'building', 'transit', 'bike'],
+    suggestedQuestion: 'How do vertical gardens and green roofs cool down cities?',
+    response:
+      'Concrete and asphalt absorb sunlight and radiate heat, creating urban heat islands. Green roofs, street trees, and vertical gardens shade surfaces and cool the surrounding air through evapotranspiration while absorbing heavy stormwater.',
+    actionTip: 'Unlock Future City at Level 3 to transform towers with solar canopies and vertical gardens!',
+  },
+  {
+    id: 'blue-carbon',
+    title: 'Blue Carbon & Seagrass',
+    keywords: ['seagrass', 'mangrove', 'blue carbon', 'kelp', 'coastal', 'estuary'],
+    suggestedQuestion: 'What is blue carbon and where is it stored?',
+    response:
+      'Blue carbon is carbon captured by coastal and marine ecosystems such as mangroves, salt marshes, and seagrass meadows. Their dense underwater roots trap organic carbon in seabed sediments for centuries.',
+    actionTip: 'Try the Seagrass Meadow Care mission in Blue Ocean to protect these underwater carbon sinks.',
+  },
 ];
 
 export const COMPANION_FALLBACK_RESPONSE =

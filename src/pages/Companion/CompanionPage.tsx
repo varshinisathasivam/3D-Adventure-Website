@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Send, Sparkles, Info } from 'lucide-react';
+import { Bot, Send, Sparkles, Info, Trash2 } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { KNOWLEDGE_BASE } from '../../data/knowledge/knowledgeBase';
 import { queryLocalCompanion } from '../../services/companionService';
@@ -111,6 +111,15 @@ export const CompanionPage: React.FC = () => {
               <button type="submit" className="btn-primary px-4">
                 <Send className="h-4 w-4" />
                 <span className="hidden sm:inline">Ask</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMessages((prev) => prev.slice(0, 1))}
+                className="btn-secondary px-3"
+                title="Clear chat history"
+                aria-label="Clear chat history"
+              >
+                <Trash2 className="h-4 w-4" />
               </button>
             </form>
           </div>

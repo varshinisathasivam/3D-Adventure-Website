@@ -26,6 +26,7 @@ export const SafeCanvas: React.FC<SafeCanvasProps> = ({
   fallbackDescription = 'WebGL 3D acceleration is unavailable in this browser context. All interactive missions and progress features remain fully playable.',
 }) => {
   const graphicsQuality = useGameStore((s) => s.settings.graphicsQuality);
+  const reducedMotion = useGameStore((s) => s.settings.reducedMotion);
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   if (!webglOk) {
@@ -48,13 +49,14 @@ export const SafeCanvas: React.FC<SafeCanvasProps> = ({
     <div className={className}>
       <Canvas
         dpr={graphicsQuality === 'low' ? [1, 1] : [1, 1.5]}
+        shadows={false}
         camera={{ position: cameraPosition, fov, near: 0.1, far: 120 }}
         gl={{
           antialias: graphicsQuality === 'medium',
-          powerPreference: 'default',
+          powerPreference: graphicsQuality === 'low' ? 'low-power' : 'default',
           alpha: true,
         }}
-        frameloop="always"
+        frameloop={reducedMotion ? 'demand' : 'always'}
       >
         {children}
       </Canvas>

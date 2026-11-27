@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { CheckCircle2, Filter, Lock, Sparkles, Target } from 'lucide-react';
+import { CheckCircle2, Filter, Lock, Search, Sparkles, Target } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { MissionModal } from '../../components/missions/MissionModal';
 import { MISSIONS_DATA } from '../../data/missions/missionsData';
@@ -14,18 +14,28 @@ export const MissionCenterPage: React.FC = () => {
   const [worldFilter, setWorldFilter] = useState<'all' | WorldId>('all');
   const [difficultyFilter, setDifficultyFilter] = useState<'all' | Difficulty>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'available' | 'completed'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeMission, setActiveMission] = useState<Mission | null>(null);
 
   const filteredMissions = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
     return MISSIONS_DATA.filter((m) => {
       if (worldFilter !== 'all' && m.worldId !== worldFilter) return false;
       if (difficultyFilter !== 'all' && m.difficulty !== difficultyFilter) return false;
       const done = completedMissionIds.includes(m.id);
       if (statusFilter === 'completed' && !done) return false;
       if (statusFilter === 'available' && done) return false;
+      if (
+        q &&
+        !m.title.toLowerCase().includes(q) &&
+        !m.shortDescription.toLowerCase().includes(q) &&
+        !m.locationLabel.toLowerCase().includes(q)
+      ) {
+        return false;
+      }
       return true;
     });
-  }, [worldFilter, difficultyFilter, statusFilter, completedMissionIds]);
+  }, [worldFilter, difficultyFilter, statusFilter, searchQuery, completedMissionIds]);
 
   return (
     <AppLayout>
@@ -93,7 +103,41 @@ export const MissionCenterPage: React.FC = () => {
             <option value="available">Available</option>
             <option value="completed">Completed</option>
           </select>
+
+          <div className="relative flex-1 min-w-[180px]">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-emerald-300/60" />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search missions or locations..."
+              aria-label="Search missions"
+              className="w-full rounded-xl border border-emerald-400/25 bg-emerald-950 py-2 pl-9 pr-3 text-xs text-emerald-100 placeholder-emerald-300/40 focus:border-emerald-400 focus:outline-none"
+            />
+          </div>
         </div>
+
+        {/* Empty State */}
+        {filteredMissions.length === 0 && (
+          <div className="glass-panel mt-6 p-8 text-center">
+            <p className="font-display text-lg font-bold text-white">No missions match your filters</p>
+            <p className="mt-1 text-xs text-emerald-100/70">
+              Try clearing your search query or resetting the world/difficulty filters.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setWorldFilter('all');
+                setDifficultyFilter('all');
+                setStatusFilter('all');
+                setSearchQuery('');
+              }}
+              className="btn-secondary mt-4 text-xs"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
 
         {/* Mission Grid */}
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

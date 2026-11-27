@@ -136,7 +136,7 @@ export const LandingPage: React.FC = () => {
               A Planet Waiting to Bloom Again
             </h2>
           </div>
-          <div className="space-y-3 text-sm leading-relaxed text-emerald-100/80 lg:col-span-2">
+          <div className="space-y-4 text-sm leading-relaxed text-emerald-100/80 lg:col-span-2">
             <p>
               Verdantia’s ecosystems—its ancient woodlands, coral sanctuaries, desert springs, and
               skyline cities—are facing climate stress and pollution. As an Eco-Explorer, your
@@ -147,6 +147,21 @@ export const LandingPage: React.FC = () => {
               transformation: saplings sprout, litter vanishes, coral regains vibrant color, and
               clean wind turbines spin to life.
             </p>
+            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-950/60 p-4">
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <span className="text-emerald-200">Live Planetary Restoration Progress</span>
+                <span className="text-amber-300">
+                  {completedMissionIds.length} / 20 Missions (
+                  {Math.round((completedMissionIds.length / 20) * 100)}%)
+                </span>
+              </div>
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-black/40">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-amber-300 transition-all duration-500"
+                  style={{ width: `${Math.round((completedMissionIds.length / 20) * 100)}%` }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -177,7 +192,7 @@ export const LandingPage: React.FC = () => {
               <Link
                 key={world.id}
                 to={`/world/${world.id}`}
-                className={`glass-card group flex flex-col justify-between bg-gradient-to-br ${world.gradient} p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-300/50`}
+                className={`glass-card group flex flex-col justify-between bg-gradient-to-br ${world.gradient} p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-emerald-300/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300`}
               >
                 <div>
                   <div className="flex items-center justify-between">

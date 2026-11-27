@@ -70,13 +70,13 @@ export const Navbar: React.FC = () => {
         {/* Right Controls */}
         <div className="flex items-center gap-2.5">
           <div
-            className="hidden items-center gap-2 rounded-xl border border-amber-400/25 bg-amber-500/10 px-3 py-1.5 text-xs font-semibold text-amber-200 sm:flex"
+            className="flex items-center gap-1.5 rounded-xl border border-amber-400/25 bg-amber-500/10 px-2.5 py-1.5 text-xs font-semibold text-amber-200 sm:gap-2 sm:px-3"
             title="Current Level & XP"
           >
             <Sparkles className="h-3.5 w-3.5 text-amber-300" />
             <span>Lv.{level}</span>
-            <span className="text-amber-300/60">•</span>
-            <span>{xp} XP</span>
+            <span className="hidden text-amber-300/60 sm:inline">•</span>
+            <span className="hidden sm:inline">{xp} XP</span>
           </div>
 
           <Link
@@ -131,7 +131,10 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="border-t border-emerald-400/15 bg-[#062018] px-4 py-4 lg:hidden">
+        <nav
+          aria-label="Mobile navigation"
+          className="border-t border-emerald-400/15 bg-[#062018] px-4 py-4 lg:hidden"
+        >
           <div className="mb-3 flex items-center justify-between rounded-xl bg-emerald-900/30 px-3 py-2 text-xs text-emerald-200">
             <span>
               {user.username} • Lv.{level} ({xp} XP)
@@ -179,7 +182,7 @@ export const Navbar: React.FC = () => {
               Settings
             </Link>
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

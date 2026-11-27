@@ -40,6 +40,7 @@ export const ForestWorldScene: React.FC<ForestWorldSceneProps> = ({
 
   const riverRef = useRef<THREE.Mesh>(null);
   const deerRef = useRef<THREE.Group>(null);
+  const birdsRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (reducedMotion) return;
@@ -47,6 +48,10 @@ export const ForestWorldScene: React.FC<ForestWorldSceneProps> = ({
     if (deerRef.current && wildlifeActive) {
       deerRef.current.position.x = Math.sin(t * 0.5) * 1.6;
       deerRef.current.rotation.y = Math.cos(t * 0.5) > 0 ? Math.PI / 2 : -Math.PI / 2;
+    }
+    if (birdsRef.current && wildlifeActive) {
+      birdsRef.current.rotation.y = t * 0.45;
+      birdsRef.current.position.y = 3.2 + Math.sin(t * 1.6) * 0.25;
     }
   });
 
@@ -150,6 +155,51 @@ export const ForestWorldScene: React.FC<ForestWorldSceneProps> = ({
             <cylinderGeometry args={[0.05, 0.05, 0.35, 5]} />
             <meshStandardMaterial color="#92400e" />
           </mesh>
+        </group>
+      )}
+
+      {/* Riverbank Boulders */}
+      {[
+        [-1.1, 0.18, -1.6],
+        [1.2, 0.22, 1.4],
+        [-1.3, 0.15, 3.8],
+      ].map((pos, idx) => (
+        <mesh key={`rock-${idx}`} position={pos as [number, number, number]}>
+          <dodecahedronGeometry args={[0.28, 0]} />
+          <meshStandardMaterial color="#64748b" flatShading />
+        </mesh>
+      ))}
+
+      {/* Wildflowers sprouting as forest recovers */}
+      {restorationRatio >= 0.4 &&
+        [
+          [-3.1, 0.08, 1.2, '#facc15'],
+          [2.8, 0.08, -0.8, '#f472b6'],
+          [-1.8, 0.08, -3.5, '#38bdf8'],
+          [1.9, 0.08, 3.1, '#facc15'],
+        ].map(([x, y, z, col], idx) => (
+          <mesh key={`flower-${idx}`} position={[x as number, y as number, z as number]}>
+            <octahedronGeometry args={[0.14, 0]} />
+            <meshStandardMaterial color={col as string} flatShading />
+          </mesh>
+        ))}
+
+      {/* Circling Low-Poly Birds */}
+      {wildlifeActive && (
+        <group ref={birdsRef} position={[0, 3.2, 0]}>
+          {[0, 1, 2].map((b) => {
+            const ang = (b / 3) * Math.PI * 2;
+            return (
+              <mesh
+                key={b}
+                position={[Math.cos(ang) * 2.5, 0, Math.sin(ang) * 2.5]}
+                rotation={[0, -ang, 0]}
+              >
+                <coneGeometry args={[0.12, 0.35, 3]} />
+                <meshStandardMaterial color="#fef08a" flatShading />
+              </mesh>
+            );
+          })}
         </group>
       )}
 

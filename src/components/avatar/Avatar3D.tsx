@@ -22,13 +22,27 @@ export const Avatar3D: React.FC<Avatar3DProps> = ({
   animate = true,
 }) => {
   const groupRef = useRef<THREE.Group>(null);
+  const leftArmRef = useRef<THREE.Mesh>(null);
+  const rightArmRef = useRef<THREE.Mesh>(null);
+  const waveBoostRef = useRef(0);
   const reducedMotion = useGameStore((s) => s.settings.reducedMotion);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!groupRef.current || !animate || reducedMotion) return;
     const t = state.clock.getElapsedTime();
     groupRef.current.position.y = position[1] + Math.sin(t * 2) * 0.06;
-    groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.25;
+    if (waveBoostRef.current > 0) {
+      waveBoostRef.current = Math.max(0, waveBoostRef.current - delta * 2);
+      groupRef.current.rotation.y += delta * 6;
+    } else {
+      groupRef.current.rotation.y = Math.sin(t * 0.6) * 0.25;
+    }
+    if (leftArmRef.current) {
+      leftArmRef.current.rotation.z = 0.2 + Math.sin(t * 2.5) * 0.12;
+    }
+    if (rightArmRef.current) {
+      rightArmRef.current.rotation.z = -0.2 - Math.sin(t * 2.5) * 0.12;
+    }
   });
 
   const bodyScale: [number, number, number] =
@@ -39,7 +53,15 @@ export const Avatar3D: React.FC<Avatar3DProps> = ({
         : [1, 1, 1];
 
   return (
-    <group ref={groupRef} position={position} scale={scale}>
+    <group
+      ref={groupRef}
+      position={position}
+      scale={scale}
+      onClick={(e) => {
+        e.stopPropagation();
+        waveBoostRef.current = 1.2;
+      }}
+    >
       {/* Torso */}
       <mesh position={[0, 0.65, 0]} scale={bodyScale}>
         <cylinderGeometry args={[0.32, 0.42, 0.85, 8]} />
@@ -55,11 +77,11 @@ export const Avatar3D: React.FC<Avatar3DProps> = ({
       )}
 
       {/* Arms */}
-      <mesh position={[-0.44, 0.7, 0]} rotation={[0, 0, 0.2]}>
+      <mesh ref={leftArmRef} position={[-0.44, 0.7, 0]} rotation={[0, 0, 0.2]}>
         <capsuleGeometry args={[0.1, 0.45, 4, 6]} />
         <meshStandardMaterial color={config.outfitColor} roughness={0.6} />
       </mesh>
-      <mesh position={[0.44, 0.7, 0]} rotation={[0, 0, -0.2]}>
+      <mesh ref={rightArmRef} position={[0.44, 0.7, 0]} rotation={[0, 0, -0.2]}>
         <capsuleGeometry args={[0.1, 0.45, 4, 6]} />
         <meshStandardMaterial color={config.outfitColor} roughness={0.6} />
       </mesh>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OrbitControls } from '@react-three/drei';
-import { Check, Compass, Sparkles } from 'lucide-react';
+import { Check, Compass, Shuffle, Sparkles } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import { SafeCanvas } from '../../components/3d/SafeCanvas';
 import { Avatar3D } from '../../components/avatar/Avatar3D';
@@ -49,6 +49,19 @@ export const AvatarPage: React.FC = () => {
     setTimeout(() => setSavedToast(false), 2500);
   };
 
+  const handleRandomize = () => {
+    const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+    setDraft({
+      characterType: pick(CHARACTER_TYPES).id,
+      outfitColor: pick(OUTFIT_COLORS),
+      skinTone: pick(SKIN_TONES),
+      hairColor: pick(HAIR_COLORS),
+      hairstyle: pick(HAIRSTYLES).id,
+      accessory: pick(ACCESSORIES).id,
+    });
+    playChime(soundEnabled, 'click');
+  };
+
   const handleEnterWorld = () => {
     updateAvatar(draft, true);
     navigate('/explore');
@@ -69,10 +82,16 @@ export const AvatarPage: React.FC = () => {
               Customize your 3D avatar. Saved locally in your browser and carried into Verdantia&apos;s worlds.
             </p>
           </div>
-          <button type="button" onClick={handleEnterWorld} className="btn-primary">
-            <Compass className="h-4 w-4" />
-            Enter World
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={handleRandomize} className="btn-secondary">
+              <Shuffle className="h-4 w-4" />
+              Randomize Look
+            </button>
+            <button type="button" onClick={handleEnterWorld} className="btn-primary">
+              <Compass className="h-4 w-4" />
+              Enter World
+            </button>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-12">

@@ -18,8 +18,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, hideFooter = fal
         reducedMotion ? 'reduced-motion' : ''
       }`}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-xl focus:bg-emerald-400 focus:px-4 focus:py-2 focus:font-bold focus:text-slate-950"
+      >
+        Skip to main content
+      </a>
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
       {!hideFooter && <Footer />}
       <NotificationToasts />
     </div>

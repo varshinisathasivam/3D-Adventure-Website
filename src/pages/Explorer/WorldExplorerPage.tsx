@@ -5,6 +5,7 @@ import { AppLayout } from '../../components/layout/AppLayout';
 import { SafeCanvas } from '../../components/3d/SafeCanvas';
 import { PlanetExplorerScene } from '../../scenes/Planet/PlanetExplorerScene';
 import { WORLDS_DATA, WORLDS_MAP } from '../../data/worlds/worldsData';
+import { getMissionsByWorld } from '../../data/missions/missionsData';
 import { getWorldRestorationPercent, useGameStore } from '../../store/useGameStore';
 import { calculateLevelFromXp } from '../../data/rewards/rewardsData';
 
@@ -94,10 +95,15 @@ export const WorldExplorerPage: React.FC = () => {
                 const Icon = WORLD_ICONS[w.id];
                 const unlocked = level >= w.unlockLevel;
                 const active = w.id === selectedWorldId;
+                const worldMissions = getMissionsByWorld(w.id);
+                const doneCount = worldMissions.filter((m) =>
+                  completedMissionIds.includes(m.id),
+                ).length;
                 return (
                   <button
                     key={w.id}
                     type="button"
+                    aria-pressed={active}
                     onClick={() => setSelectedWorld(w.id)}
                     className={`flex items-center gap-2 rounded-2xl border p-3 text-left transition ${
                       active
@@ -109,7 +115,7 @@ export const WorldExplorerPage: React.FC = () => {
                     <div className="min-w-0">
                       <p className="truncate font-display text-xs font-bold">{w.name}</p>
                       <p className="text-[10px] opacity-75">
-                        {unlocked ? 'Unlocked' : `Unlocks Lv.${w.unlockLevel}`}
+                        {unlocked ? `${doneCount}/${worldMissions.length} done` : `Unlocks Lv.${w.unlockLevel}`}
                       </p>
                     </div>
                   </button>

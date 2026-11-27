@@ -21,9 +21,14 @@ export const PlanetExplorerScene: React.FC<PlanetExplorerSceneProps> = ({
   const [hovered, setHovered] = useState<WorldId | null>(null);
   const reducedMotion = useGameStore((s) => s.settings.reducedMotion);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!planetRef.current || reducedMotion) return;
     planetRef.current.rotation.y += delta * 0.08;
+    const selectedInfo = WORLDS_DATA.find((w) => w.id === selectedWorld);
+    if (selectedInfo) {
+      const targetY = 1.2 + selectedInfo.planetPosition[1] * 0.4;
+      state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetY, delta * 2);
+    }
   });
 
   return (

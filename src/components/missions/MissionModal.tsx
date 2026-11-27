@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle2, Sparkles, X, XCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 import { Mission } from '../../types';
 import { useGameStore } from '../../store/useGameStore';
@@ -28,10 +28,27 @@ export const MissionModal: React.FC<MissionModalProps> = ({ mission, onClose }) 
     total: number;
   } | null>(null);
 
+  useEffect(() => {
+    setAnswers({});
+    setSubmitted(false);
+    setResult(null);
+  }, [mission?.id]);
+
+  useEffect(() => {
+    if (!mission) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [mission, onClose]);
+
   if (!mission) return null;
 
   const isAlreadyDone = completedMissionIds.includes(mission.id);
-  const allAnswered = mission.questions.every((q) => answers[q.id] !== undefined);
+  const answeredCount = mission.questions.filter((q) => answers[q.id] !== undefined).length;
+  const requiredToPass = Math.ceil(mission.questions.length * 0.6);
+  const allAnswered = answeredCount === mission.questions.length;
 
   const handleSelect = (questionId: string, optionIdx: number) => {
     if (submitted) return;
@@ -105,6 +122,10 @@ export const MissionModal: React.FC<MissionModalProps> = ({ mission, onClose }) 
           {mission.title}
         </h2>
         <p className="mt-1.5 text-sm text-emerald-100/80">{mission.instructions}</p>
+        <p className="mt-2 text-xs font-semibold text-teal-300/90">
+          Progress: {answeredCount}/{mission.questions.length} answered • Pass threshold:{' '}
+          {requiredToPass}/{mission.questions.length}
+        </p>
 
         <div className="mt-6 space-y-5">
           {mission.questions.map((q, qIdx) => {

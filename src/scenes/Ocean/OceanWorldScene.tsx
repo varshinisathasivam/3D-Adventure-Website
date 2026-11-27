@@ -26,17 +26,28 @@ export const OceanWorldScene: React.FC<OceanWorldSceneProps> = ({
   const restorationRatio = oceanDone / Math.max(1, missions.length);
   const surfaceCleaned = completedMissionIds.includes('ocean-1');
   const coralRevived = completedMissionIds.includes('ocean-2');
+  const seagrassRestored = completedMissionIds.includes('ocean-4');
+  const sanctuaryActive = completedMissionIds.includes('ocean-5');
 
   const fishGroupRef = useRef<THREE.Group>(null);
+  const turtleRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
-    if (!fishGroupRef.current || reducedMotion) return;
+    if (reducedMotion) return;
     const t = state.clock.getElapsedTime();
-    fishGroupRef.current.rotation.y = t * 0.35;
+    if (fishGroupRef.current) {
+      fishGroupRef.current.rotation.y = t * 0.35;
+    }
+    if (turtleRef.current && sanctuaryActive) {
+      turtleRef.current.position.x = Math.cos(t * 0.35) * 3.4;
+      turtleRef.current.position.z = Math.sin(t * 0.35) * 3.4;
+      turtleRef.current.rotation.y = -t * 0.35;
+    }
   });
 
   const coralColor = coralRevived ? '#f472b6' : '#cbd5e1';
   const coralColor2 = coralRevived ? '#fb923c' : '#94a3b8';
+  const seabedColor = restorationRatio >= 0.6 ? '#0891b2' : '#164e63';
 
   return (
     <>
@@ -57,8 +68,39 @@ export const OceanWorldScene: React.FC<OceanWorldSceneProps> = ({
       {/* Seabed */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.1, 0]}>
         <circleGeometry args={[9.5, 24]} />
-        <meshStandardMaterial color="#0e7490" roughness={0.9} flatShading />
+        <meshStandardMaterial color={seabedColor} roughness={0.9} flatShading />
       </mesh>
+
+      {/* Low-Poly Seagrass / Kelp */}
+      {[
+        [-2.8, -0.5, 3.5],
+        [-2.4, -0.45, 3.8],
+        [2.6, -0.5, 3.1],
+        [3.1, -0.45, 2.7],
+      ].map((pos, idx) => (
+        <mesh
+          key={`kelp-${idx}`}
+          position={pos as [number, number, number]}
+          scale={[1, seagrassRestored ? 1.5 : 0.75, 1]}
+        >
+          <coneGeometry args={[0.14, 1.2, 4]} />
+          <meshStandardMaterial color={seagrassRestored ? '#10b981' : '#0f766e'} flatShading />
+        </mesh>
+      ))}
+
+      {/* Gliding Sea Turtle when Sanctuary of the Deep is completed */}
+      {sanctuaryActive && (
+        <group ref={turtleRef} position={[3.4, 1.1, 0]}>
+          <mesh scale={[1.2, 0.45, 0.9]}>
+            <dodecahedronGeometry args={[0.38, 0]} />
+            <meshStandardMaterial color="#10b981" flatShading />
+          </mesh>
+          <mesh position={[0.42, 0.05, 0]}>
+            <sphereGeometry args={[0.14, 6, 6]} />
+            <meshStandardMaterial color="#34d399" flatShading />
+          </mesh>
+        </group>
+      )}
 
       {/* Coral Reef Clusters */}
       {[

@@ -21,6 +21,17 @@ export const DashboardPage: React.FC = () => {
     (completedMissionIds.length / MISSIONS_DATA.length) * 100,
   );
 
+  const difficultyStats = (['Easy', 'Medium', 'Hard'] as const).map((diff) => {
+    const total = MISSIONS_DATA.filter((m) => m.difficulty === diff).length;
+    const done = MISSIONS_DATA.filter(
+      (m) => m.difficulty === diff && completedMissionIds.includes(m.id),
+    ).length;
+    return { diff, done, total };
+  });
+
+  const ringCircumference = 2 * Math.PI * 34;
+  const ringOffset = ringCircumference * (1 - overallRestoration / 100);
+
   return (
     <AppLayout>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -118,10 +129,42 @@ export const DashboardPage: React.FC = () => {
         {/* World Restoration Chart & Recent Activity */}
         <div className="mt-6 grid gap-6 lg:grid-cols-12">
           <div className="glass-panel p-6 lg:col-span-7">
-            <h2 className="font-display text-lg font-bold text-white">
-              World Restoration Progress
-            </h2>
-            <div className="mt-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="font-display text-lg font-bold text-white">
+                World Restoration Progress
+              </h2>
+              <div className="flex items-center gap-3">
+                <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80" aria-hidden="true">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="34"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="7"
+                  />
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="34"
+                    fill="none"
+                    stroke="#10b981"
+                    strokeWidth="7"
+                    strokeLinecap="round"
+                    strokeDasharray={ringCircumference}
+                    strokeDashoffset={ringOffset}
+                  />
+                </svg>
+                <div className="text-xs">
+                  <p className="font-display text-base font-bold text-emerald-300">
+                    {overallRestoration}%
+                  </p>
+                  <p className="text-emerald-200/70">Global Health</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-4">
               {WORLDS_DATA.map((w) => {
                 const pct = getWorldRestorationPercent(w.id, completedMissionIds);
                 return (
@@ -139,6 +182,20 @@ export const DashboardPage: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="mt-6 grid grid-cols-3 gap-3 border-t border-white/10 pt-5">
+              {difficultyStats.map(({ diff, done, total }) => (
+                <div
+                  key={diff}
+                  className="rounded-xl border border-emerald-400/15 bg-emerald-950/60 p-3 text-center"
+                >
+                  <p className="text-[11px] font-semibold text-emerald-200/75">{diff}</p>
+                  <p className="mt-1 font-display text-base font-bold text-white">
+                    {done}/{total}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
 

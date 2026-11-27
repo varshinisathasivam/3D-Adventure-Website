@@ -36,6 +36,13 @@ export const LeaderboardPage: React.FC = () => {
     }));
   }, [period, user.username, avatar, xp, level, completedMissionIds.length]);
 
+  const myEntry = rankedEntries.find((e) => !e.isDemoUser);
+  const aboveEntry = myEntry && myEntry.rank > 1 ? rankedEntries[myEntry.rank - 2] : null;
+  const xpGap =
+    myEntry && aboveEntry
+      ? (period === 'weekly' ? aboveEntry.weeklyXp - myEntry.weeklyXp : aboveEntry.overallXp - myEntry.overallXp)
+      : 0;
+
   return (
     <AppLayout>
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
@@ -52,6 +59,7 @@ export const LeaderboardPage: React.FC = () => {
           <div className="inline-flex rounded-xl border border-emerald-400/25 bg-emerald-950/70 p-1">
             <button
               type="button"
+              aria-pressed={period === 'weekly'}
               onClick={() => setPeriod('weekly')}
               className={`rounded-lg px-4 py-1.5 text-xs font-bold transition ${
                 period === 'weekly'
@@ -63,6 +71,7 @@ export const LeaderboardPage: React.FC = () => {
             </button>
             <button
               type="button"
+              aria-pressed={period === 'overall'}
               onClick={() => setPeriod('overall')}
               className={`rounded-lg px-4 py-1.5 text-xs font-bold transition ${
                 period === 'overall'
@@ -75,11 +84,18 @@ export const LeaderboardPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-2 rounded-xl border border-sky-400/25 bg-sky-500/10 px-4 py-2.5 text-xs text-sky-200">
-          <Info className="h-4 w-4 shrink-0" />
-          <span>
-            Showing sample demo explorers alongside your live local progress.
-          </span>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-sky-400/25 bg-sky-500/10 px-4 py-2.5 text-xs text-sky-200">
+          <div className="flex items-center gap-2">
+            <Info className="h-4 w-4 shrink-0" />
+            <span>Showing sample demo explorers alongside your live local progress.</span>
+          </div>
+          {myEntry && (
+            <span className="font-semibold text-amber-300">
+              {myEntry.rank === 1
+                ? 'You are #1 on the board!'
+                : `Your Rank: #${myEntry.rank} • ${xpGap + 1} XP to pass ${aboveEntry?.username}`}
+            </span>
+          )}
         </div>
 
         <div className="glass-panel mt-6 overflow-hidden">

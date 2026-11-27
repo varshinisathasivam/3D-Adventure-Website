@@ -24,13 +24,20 @@ export const FutureCityScene: React.FC<FutureCitySceneProps> = ({
   const doneCount = missions.filter((m) => completedMissionIds.includes(m.id)).length;
   const restorationRatio = doneCount / Math.max(1, missions.length);
   const solarActive = completedMissionIds.includes('city-1');
+  const transitActive = completedMissionIds.includes('city-2');
   const greenActive = completedMissionIds.includes('city-3');
 
   const turbineRef = useRef<THREE.Group>(null);
+  const tramRef = useRef<THREE.Mesh>(null);
 
-  useFrame((_, delta) => {
-    if (!turbineRef.current || reducedMotion) return;
-    turbineRef.current.rotation.z += delta * (1.2 + restorationRatio * 1.8);
+  useFrame((state, delta) => {
+    if (reducedMotion) return;
+    if (turbineRef.current) {
+      turbineRef.current.rotation.z += delta * (1.2 + restorationRatio * 1.8);
+    }
+    if (tramRef.current && transitActive) {
+      tramRef.current.position.z = Math.sin(state.clock.getElapsedTime() * 0.7) * 5.2;
+    }
   });
 
   return (
@@ -102,6 +109,34 @@ export const FutureCityScene: React.FC<FutureCitySceneProps> = ({
           ))}
         </group>
       </group>
+
+      {/* Electric Tram on Boulevard (city-2) */}
+      {transitActive && (
+        <mesh ref={tramRef} position={[0, 0.24, 0]}>
+          <boxGeometry args={[0.45, 0.35, 1.3]} />
+          <meshStandardMaterial color="#38bdf8" emissive="#0ea5e9" emissiveIntensity={0.4} flatShading />
+        </mesh>
+      )}
+
+      {/* Pocket Park Trees (city-3) */}
+      {greenActive &&
+        [
+          [-1.6, 0, -1.6],
+          [1.6, 0, -1.6],
+          [-1.6, 0, 1.6],
+          [1.6, 0, 1.6],
+        ].map((pos, idx) => (
+          <group key={`park-tree-${idx}`} position={pos as [number, number, number]}>
+            <mesh position={[0, 0.25, 0]}>
+              <cylinderGeometry args={[0.06, 0.08, 0.5, 5]} />
+              <meshStandardMaterial color="#78350f" />
+            </mesh>
+            <mesh position={[0, 0.7, 0]}>
+              <coneGeometry args={[0.35, 0.65, 6]} />
+              <meshStandardMaterial color="#22c55e" flatShading />
+            </mesh>
+          </group>
+        ))}
 
       <Avatar3D config={avatar} position={[0, 0.02, 2.4]} scale={0.75} />
 

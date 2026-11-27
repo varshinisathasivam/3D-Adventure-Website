@@ -82,6 +82,18 @@ export const PlanetHeroScene: React.FC = () => {
             </mesh>
           </group>
         ))}
+
+        {/* Subtle Atmospheric Ring */}
+        <mesh rotation={[Math.PI * 0.42, 0.25, 0]}>
+          <torusGeometry args={[2.55, 0.025, 6, 36]} />
+          <meshBasicMaterial color="#5eead4" transparent opacity={0.45} />
+        </mesh>
+
+        {/* Orbiting Eco-Moon */}
+        <mesh position={[2.6, 0.4, 0.6]}>
+          <icosahedronGeometry args={[0.24, 1]} />
+          <meshStandardMaterial color="#fde68a" roughness={0.7} flatShading />
+        </mesh>
       </group>
 
       {/* Orbiting Floating Islands */}

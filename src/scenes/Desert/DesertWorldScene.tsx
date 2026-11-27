@@ -23,6 +23,8 @@ export const DesertWorldScene: React.FC<DesertWorldSceneProps> = ({
   const doneCount = missions.filter((m) => completedMissionIds.includes(m.id)).length;
   const restorationRatio = doneCount / Math.max(1, missions.length);
   const oasisSize = 0.8 + restorationRatio * 1.4;
+  const dewBuilt = completedMissionIds.includes('desert-1');
+  const solarShadeBuilt = completedMissionIds.includes('desert-4');
 
   return (
     <>
@@ -59,10 +61,46 @@ export const DesertWorldScene: React.FC<DesertWorldSceneProps> = ({
       ))}
 
       {/* Central Oasis Spring (grows with restoration) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
+        <circleGeometry args={[oasisSize + 0.4, 20]} />
+        <meshStandardMaterial color={restorationRatio >= 0.4 ? '#4d7c0f' : '#b45309'} roughness={0.9} />
+      </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
         <circleGeometry args={[oasisSize, 20]} />
         <meshStandardMaterial color="#14b8a6" roughness={0.2} />
       </mesh>
+
+      {/* Dew Collector Net (desert-1) */}
+      {dewBuilt && (
+        <group position={[-3.2, 0, -1.8]}>
+          <mesh position={[-0.4, 0.65, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 1.3, 6]} />
+            <meshStandardMaterial color="#94a3b8" />
+          </mesh>
+          <mesh position={[0.4, 0.65, 0]}>
+            <cylinderGeometry args={[0.04, 0.04, 1.3, 6]} />
+            <meshStandardMaterial color="#94a3b8" />
+          </mesh>
+          <mesh position={[0, 0.75, 0]}>
+            <boxGeometry args={[0.8, 0.7, 0.04]} />
+            <meshStandardMaterial color="#38bdf8" transparent opacity={0.55} />
+          </mesh>
+        </group>
+      )}
+
+      {/* Agrivoltaic Solar Shade Canopy (desert-4) */}
+      {solarShadeBuilt && (
+        <group position={[2.6, 0, 2.2]}>
+          <mesh position={[0, 0.6, 0]}>
+            <cylinderGeometry args={[0.06, 0.06, 1.2, 6]} />
+            <meshStandardMaterial color="#cbd5e1" />
+          </mesh>
+          <mesh position={[0, 1.25, 0]} rotation={[0.25, 0, 0]}>
+            <boxGeometry args={[1.3, 0.06, 0.9]} />
+            <meshStandardMaterial color="#0284c7" emissive="#0369a1" emissiveIntensity={0.3} />
+          </mesh>
+        </group>
+      )}
 
       {/* Oasis Palms emerging with restoration */}
       {restorationRatio >= 0.2 &&

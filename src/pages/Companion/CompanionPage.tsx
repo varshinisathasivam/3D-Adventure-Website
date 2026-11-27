@@ -68,7 +68,7 @@ export const CompanionPage: React.FC = () => {
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Chat Area */}
           <div className="glass-panel flex h-[520px] flex-col p-5 lg:col-span-8">
-            <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+            <div className="flex-1 space-y-4 overflow-y-auto pr-2" aria-live="polite" aria-label="Eco-Guide chat history">
               {messages.map((msg) => (
                 <div
                   key={msg.id}

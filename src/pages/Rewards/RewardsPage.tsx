@@ -1,7 +1,12 @@
 import React from 'react';
 import { Award, Globe, Lock, Sparkles, Sprout, Sun, Trees, UserCheck, Waves, Zap } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
-import { BADGES_DATA, LEVEL_THRESHOLDS, calculateLevelFromXp } from '../../data/rewards/rewardsData';
+import {
+  BADGES_DATA,
+  LEVEL_THRESHOLDS,
+  calculateLevelFromXp,
+  getNextUnlockMilestone,
+} from '../../data/rewards/rewardsData';
 import { useGameStore } from '../../store/useGameStore';
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -42,9 +47,14 @@ export const RewardsPage: React.FC = () => {
 
         {/* Level Progression Ladder */}
         <div className="glass-panel mt-6 p-6">
-          <h2 className="font-display text-lg font-bold text-white">
-            Level Progression (Current: Level {levelInfo.level} • {xp} XP)
-          </h2>
+          <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+            <h2 className="font-display text-lg font-bold text-white">
+              Level Progression (Current: Level {levelInfo.level} • {xp} XP)
+            </h2>
+            <span className="text-xs font-semibold text-amber-300">
+              {getNextUnlockMilestone(levelInfo.level, xp)}
+            </span>
+          </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
             {LEVEL_THRESHOLDS.map((threshold, idx) => {
               const lvl = idx + 1;

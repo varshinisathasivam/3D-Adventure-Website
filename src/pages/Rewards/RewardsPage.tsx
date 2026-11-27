@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Award, Globe, Lock, Sparkles, Sprout, Sun, Trees, UserCheck, Waves, Zap } from 'lucide-react';
 import { AppLayout } from '../../components/layout/AppLayout';
 import {
@@ -24,6 +24,12 @@ export const RewardsPage: React.FC = () => {
   const xp = useGameStore((s) => s.xp);
   const unlockedBadgeIds = useGameStore((s) => s.unlockedBadgeIds);
   const levelInfo = calculateLevelFromXp(xp);
+  const [category, setCategory] = useState<'all' | 'world' | 'milestone' | 'mastery'>('all');
+
+  const visibleBadges =
+    category === 'all'
+      ? BADGES_DATA
+      : BADGES_DATA.filter((b) => b.category === category);
 
   return (
     <AppLayout>
@@ -76,18 +82,37 @@ export const RewardsPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Category Filter Tabs */}
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          {(['all', 'world', 'milestone', 'mastery'] as const).map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              aria-pressed={category === cat}
+              onClick={() => setCategory(cat)}
+              className={`rounded-xl px-4 py-2 text-xs font-bold capitalize transition ${
+                category === cat
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  : 'border border-emerald-400/25 bg-emerald-950/60 text-emerald-100/80 hover:border-emerald-400/50'
+              }`}
+            >
+              {cat === 'all' ? 'All Badges' : `${cat} Badges`}
+            </button>
+          ))}
+        </div>
+
         {/* Badges Grid */}
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {BADGES_DATA.map((badge) => {
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {visibleBadges.map((badge) => {
             const unlocked = unlockedBadgeIds.includes(badge.id);
             const Icon = ICON_MAP[badge.icon] ?? Award;
 
             return (
               <div
                 key={badge.id}
-                className={`glass-card flex flex-col justify-between p-5 transition ${
+                className={`glass-card flex flex-col justify-between p-5 transition duration-300 ${
                   unlocked
-                    ? 'border-amber-300/40 bg-gradient-to-br from-emerald-900/60 to-amber-950/30'
+                    ? 'border-amber-300/45 bg-gradient-to-br from-emerald-900/60 to-amber-950/30 shadow-lg shadow-amber-500/10 hover:-translate-y-1'
                     : 'opacity-70 grayscale-[40%]'
                 }`}
               >

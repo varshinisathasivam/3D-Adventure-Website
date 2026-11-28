@@ -10,6 +10,15 @@ describe('Local Eco-Guide Companion Service', () => {
 
     const oceanReply = queryLocalCompanion('How do microplastics affect coral reefs?');
     expect(oceanReply.matchedTopic?.id).toBe('ocean-pollution');
+
+    const pollinatorReply = queryLocalCompanion('Why do bees and pollinators matter?');
+    expect(pollinatorReply.matchedTopic?.id).toBe('pollinators-biodiversity');
+
+    const urbanReply = queryLocalCompanion('How do vertical gardens cool the urban heat island?');
+    expect(urbanReply.matchedTopic?.id).toBe('urban-cooling');
+
+    const blueCarbonReply = queryLocalCompanion('Where is blue carbon stored in seagrass?');
+    expect(blueCarbonReply.matchedTopic?.id).toBe('blue-carbon');
   });
 
   it('returns an honest fallback when a topic is not covered', () => {

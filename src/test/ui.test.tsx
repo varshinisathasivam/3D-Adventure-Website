@@ -6,6 +6,10 @@ import { AuthPage } from '../pages/Auth/AuthPage';
 import { CompanionPage } from '../pages/Companion/CompanionPage';
 import { MissionCenterPage } from '../pages/MissionCenter/MissionCenterPage';
 import { DashboardPage } from '../pages/Dashboard/DashboardPage';
+import { RewardsPage } from '../pages/Rewards/RewardsPage';
+import { LeaderboardPage } from '../pages/Leaderboard/LeaderboardPage';
+import { MissionModal } from '../components/missions/MissionModal';
+import { MISSIONS_DATA } from '../data/missions/missionsData';
 
 describe('Verdantia UI Pages', () => {
   it('renders LandingPage with tagline and WebGL 2D fallback in headless jsdom', () => {
@@ -70,5 +74,38 @@ describe('Verdantia UI Pages', () => {
       </MemoryRouter>,
     );
     expect(screen.getByText(/World Restoration Progress/i)).toBeInTheDocument();
+  });
+
+  it('filters badges in RewardsPage and toggles period in LeaderboardPage', () => {
+    render(
+      <MemoryRouter>
+        <RewardsPage />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /world Badges/i }));
+    expect(screen.getByText(/Forest Guardian/i)).toBeInTheDocument();
+    expect(screen.queryByText(/First Sprout/i)).not.toBeInTheDocument();
+
+    render(
+      <MemoryRouter>
+        <LeaderboardPage />
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Weekly/i }));
+    expect(screen.getByRole('button', { name: /Weekly/i })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('resets MissionModal state when switching missions', () => {
+    const onClose = () => {};
+    const { rerender } = render(
+      <MissionModal mission={MISSIONS_DATA[0]} onClose={onClose} />,
+    );
+    expect(screen.getByText(/Progress: 0\/2 answered/i)).toBeInTheDocument();
+    const firstOption = screen.getAllByRole('button')[1];
+    fireEvent.click(firstOption);
+    expect(screen.getByText(/Progress: 1\/2 answered/i)).toBeInTheDocument();
+
+    rerender(<MissionModal mission={MISSIONS_DATA[1]} onClose={onClose} />);
+    expect(screen.getByText(/Progress: 0\/2 answered/i)).toBeInTheDocument();
   });
 });
